@@ -1,0 +1,30 @@
+name: Duo test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Apple once
+        run: |
+          python3 - << 'EOF'
+          import json, urllib.parse, urllib.request, urllib.error
+          for part in ["MK1E4LL/A", "MK1F4LL/A"]:
+              qs = urllib.parse.urlencode({"fae": "true", "mts.0": "regular", "cppart": "UNLOCKED/US", "location": "47404", "product": part})
+              req = urllib.request.Request("https://www.apple.com/us-edu/shop/pickup-message-recommendations?" + qs,
+                                           headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as r:
+                      status = r.status
+                      data = json.load(r)
+                  pm = data["body"].get("PickupMessage") or {}
+                  stores = pm.get("stores", [])
+                  names = [s.get("storeName") for s in stores]
+                  avail = [s.get("storeName") for s in stores if s.get("partsAvailability")]
+                  print(part, "HTTP", status, "-", len(stores), "stores, available:", avail)
+                  print("  stores:", names)
+              except urllib.error.HTTPError as e:
+                  print(part, "HTTP ERROR", e.code, e.reason)
+              except Exception as e:
+                  print(part, "FAILED:", e)
+          EOF
