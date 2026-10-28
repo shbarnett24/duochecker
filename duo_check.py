@@ -1,6 +1,6 @@
 import json, os, urllib.parse, urllib.request
 
-PARTS = ["MK1E4LL/A", "MK1F4LL/A"]
+PARTS = ["MK1E4LL/A"]
 LABELS = {"MK1E4LL/A": "256GB Star White", "MK1F4LL/A": "256GB Night Sky"}
 CPPART = "UNLOCKED/US"
 LOCATION = "47404"
